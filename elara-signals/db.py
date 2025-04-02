@@ -28,3 +28,10 @@ def add_user(user_id, username, first_name):
                   (user_id, username, first_name, datetime.utcnow().isoformat()))
     conn.commit()
     conn.close()
+
+def update_birthdate(user_id, birthdate):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("UPDATE users SET birthdate=? WHERE id=?", (birthdate, user_id))
+    conn.commit()
+    conn.close()
