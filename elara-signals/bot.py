@@ -26,3 +26,22 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+from telegram.ext import MessageHandler, filters
+from datetime import datetime
+from db import update_birthdate  # мы сейчас допишем эту функцию
+
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    message = update.message.text.strip()
+
+    # Пробуем распознать дату
+    try:
+        birthdate = datetime.strptime(message, "%d.%m.%Y").date()
+        update_birthdate(user.id, birthdate.isoformat())
+        await update.message.reply_text(
+            f"🗓 Записала твою дату: {birthdate.strftime('%d.%m.%Y')}.\nElara услышала. Завтра ты получишь свой первый знак."
+        )
+    except ValueError:
+        await update.message.reply_text("😶 Я не поняла... Попробуй ввести дату в формате ДД.ММ.ГГГГ.")
+
