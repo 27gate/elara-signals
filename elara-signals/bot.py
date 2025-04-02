@@ -1,10 +1,10 @@
 import logging
+import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from db import init_db, add_user
 
-import os
-BOT_TOKEN = os.environ.get("BOT_TOKEN")  # ← сюда вставь свой токен
+BOT_TOKEN = os.environ.get("BOT_TOKEN")  # ← безопасно!
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
