@@ -3,7 +3,8 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from db import init_db, add_user
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # ← сюда вставь свой токен
+import os
+BOT_TOKEN = os.environ.get("BOT_TOKEN")  # ← сюда вставь свой токен
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
