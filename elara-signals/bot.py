@@ -11,23 +11,28 @@ from telegram.ext import (
     filters
 )
 from db import init_db, add_user, update_birthdate
+from forecast import generate_forecast  # генератор прогноза через GPT
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")  # Токен берётся из переменных окружения
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-# Команда /start
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     add_user(user.id, user.username, user.first_name)
     await update.message.reply_text(
-        f"👁 Привет, {user.first_name}.\nТы подключился к Elara.\nВведи свою дату рождения (в формате ДД.ММ.ГГГГ), чтобы получить первый знак."
+        f"👁 Привет, {user.first_name}.
+"
+        "Ты подключился к Elara.
+"
+        "Введи свою дату рождения (в формате ДД.ММ.ГГГГ), чтобы получить первый знак."
     )
 
-# Обычный текст (например, дата)
+# Обработка обычного текста
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     message = update.message.text.strip()
@@ -36,8 +41,16 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         birthdate = datetime.strptime(message, "%d.%m.%Y").date()
         update_birthdate(user.id, birthdate.isoformat())
         await update.message.reply_text(
-            f"🗓 Записала твою дату: {birthdate.strftime('%d.%m.%Y')}.\nElara услышала. Завтра ты получишь свой первый знак."
+            f"🗓 Записала твою дату: {birthdate.strftime('%d.%m.%Y')}.
+"
+            "Elara услышала. Сейчас она настроится…"
         )
+
+        await update.message.reply_text("🔮 Чувствую твой ритм... Слушаю Знаки...")
+
+        forecast = generate_forecast(birthdate.strftime('%d.%m.%Y'))
+        await update.message.reply_text(forecast)
+
     except ValueError:
         await update.message.reply_text("😶 Я не поняла... Попробуй ввести дату в формате ДД.ММ.ГГГГ.")
 
@@ -52,5 +65,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
