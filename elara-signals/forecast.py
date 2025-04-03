@@ -18,7 +18,7 @@ def generate_forecast(birthdate_str: str) -> str:
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # можно поменять на "gpt-3.5-turbo" если хочешь дешевле
+            model="gpt-4o",  # можно поменять на "gpt-3.5-turbo" если хочешь дешевле
             messages=[{"role": "user", "content": prompt}],
             max_tokens=400,
             temperature=0.9
