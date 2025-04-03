@@ -1,8 +1,7 @@
 import openai
-import os
+from openai import OpenAI
 
-# Получаем API-ключ из переменных окружения
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def generate_forecast(birthdate_str: str) -> str:
     prompt = (
@@ -17,12 +16,14 @@ def generate_forecast(birthdate_str: str) -> str:
     )
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",  # можно поменять на "gpt-3.5-turbo" если хочешь дешевле
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=400,
-            temperature=0.9
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.9,
+            max_tokens=400
         )
-        return response["choices"][0]["message"]["content"].strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"⚠️ Что-то пошло не так при получении прогноза: {e}"
